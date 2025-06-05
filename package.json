@@ -1,12 +1,12 @@
 {
-  "name": "huggingface-vscode",
-  "displayName": "llm-vscode",
-  "description": "LLM powered development for VS Code",
-  "version": "0.2.2",
-  "publisher": "HuggingFace",
+  "name": "llm-vscode-dropsolid",
+  "displayName": "LLM VS Code (Dropsolid)",
+  "description": "LLM powered development for VS Code with Vertex AI Codestral support",
+  "version": "0.2.3",
+  "publisher": "Dropsolid",
   "icon": "small_logo.png",
   "engines": {
-    "vscode": "^1.82.0"
+    "vscode": "^1.90.0"
   },
   "galleryBanner": {
     "color": "#100f11",
@@ -14,23 +14,18 @@
   },
   "badges": [
     {
-      "url": "https://img.shields.io/github/stars/huggingface/llm-vscode?style=social",
+      "url": "https://img.shields.io/github/stars/Nikro/llm-vscode?style=social",
       "description": "Star llm-vscode on Github",
-      "href": "https://github.com/huggingface/llm-vscode"
-    },
-    {
-      "url": "https://img.shields.io/twitter/follow/huggingface?style=social",
-      "description": "Follow Huggingface on Twitter",
-      "href": "https://twitter.com/huggingface"
+      "href": "https://github.com/Nikro/llm-vscode"
     }
   ],
-  "homepage": "https://huggingface.co",
+  "homepage": "https://dropsolid.com/en",
   "repository": {
-    "url": "https://github.com/huggingface/llm-vscode.git",
+    "url": "https://github.com/Nikro/llm-vscode.git",
     "type": "git"
   },
   "bugs": {
-    "url": "https://github.com/huggingface/llm-vscode/issues"
+    "url": "https://github.com/Nikro/llm-vscode/issues"
   },
   "license": "Apache-2.0",
   "categories": [
@@ -43,11 +38,11 @@
     "ai",
     "llm",
     "development",
-    "huggingface"
+    "vertex-ai",
+    "codestral",
+    "dropsolid"
   ],
-  "activationEvents": [
-    "*"
-  ],
+  "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
@@ -241,7 +236,8 @@
         "command": "editor.action.inlineSuggest.trigger"
       },
       {
-        "key": "cmd+shift+a",
+        "key": "ctrl+shift+a",
+        "mac": "cmd+shift+a",
         "command": "llm.attribution"
       }
     ]

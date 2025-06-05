@@ -72,7 +72,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	const outputChannel = vscode.window.createOutputChannel('LLM VS Code', { log: true });
 	const clientOptions: LanguageClientOptions = {
-		documentSelector: [{ scheme: "*" }],
+		documentSelector: [{ scheme: "file" }, { scheme: "untitled" }],
 		outputChannel,
 	};
 	client = new LanguageClient(
