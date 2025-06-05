@@ -6,9 +6,13 @@ on:
     branches:
       - 'release/**'
 
+permissions:
+  contents: write
+  packages: write
+
 env:
   FETCH_DEPTH: 0 # pull in the tags for the version string
-  LLM_LS_VERSION: 0.5.3
+  LLM_LS_VERSION: main
 
 jobs:
   package:
@@ -52,7 +56,7 @@ jobs:
 
       - uses: robinraju/release-downloader@v1.10
         with:
-          repository: "huggingface/llm-ls"
+          repository: "Nikro/llm-ls"
           tag: ${{ env.LLM_LS_VERSION }}
           fileName: "llm-ls-${{ matrix.target }}.gz"
 
@@ -136,10 +140,23 @@ jobs:
 
       - run: npm ci
 
-      - name: Publish Extension (Code Marketplace, release)
-        # token from https://dev.azure.com/huggingface/
-        run: npx vsce publish --pat ${{ secrets.MARKETPLACE_TOKEN }} --packagePath ./pkg/llm-ls-*.vsix
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.split.outputs.tag }}
+          name: Release ${{ steps.split.outputs.tag }}
+          draft: false
+          prerelease: false
+          files: ./pkg/llm-ls-*.vsix
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Publish Extension (OpenVSX, release)
-        run: npx ovsx publish --pat ${{ secrets.OPENVSX_TOKEN }} --packagePath ./pkg/llm-ls-*.vsix
-        timeout-minutes: 2
+      - name: Upload to GitHub Packages
+        run: |
+          for file in ./pkg/llm-ls-*.vsix; do
+            echo "Uploading $file to GitHub Packages..."
+            gh release upload ${{ steps.split.outputs.tag }} "$file" --clobber
+          done
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
