@@ -1,4 +1,4 @@
-const templateKeys = ["hf/bigcode/starcoder2-15b", "hf/codellama/CodeLlama-13b-hf", "hf/Phind/Phind-CodeLlama-34B-v2", "hf/WizardLM/WizardCoder-Python-34B-V1.0", "ollama/codellama:7b", "hf/deepseek-ai/deepseek-coder-6.7b-base", "Custom"] as const;
+const templateKeys = ["hf/bigcode/starcoder2-15b", "hf/codellama/CodeLlama-13b-hf", "hf/Phind/Phind-CodeLlama-34B-v2", "hf/WizardLM/WizardCoder-Python-34B-V1.0", "ollama/codellama:7b", "hf/deepseek-ai/deepseek-coder-6.7b-base", "vertex/mistral-codestral", "Custom"] as const;
 export type TemplateKey = typeof templateKeys[number];
 
 export interface TokenizerPathConfig {
@@ -22,6 +22,7 @@ export interface Config {
 	"fillInTheMiddle.prefix": string;
 	"fillInTheMiddle.middle": string;
 	"fillInTheMiddle.suffix": string;
+	"fillInTheMiddle.style": "markers" | "prompt_suffix";
 	requestBody: object;
 	contextWindow: number;
 	tokensToClear: string[];
@@ -36,6 +37,7 @@ const HfStarCoder215BConfig: Config = {
 	"fillInTheMiddle.prefix": "<fim_prefix>",
 	"fillInTheMiddle.middle": "<fim_middle>",
 	"fillInTheMiddle.suffix": "<fim_suffix>",
+	"fillInTheMiddle.style": "markers",
 	requestBody: {
 		parameters: {
 			max_new_tokens: 60,
@@ -58,6 +60,7 @@ const HfCodeLlama13BConfig: Config = {
 	"fillInTheMiddle.prefix": "<PRE> ",
 	"fillInTheMiddle.middle": " <MID>",
 	"fillInTheMiddle.suffix": " <SUF>",
+	"fillInTheMiddle.style": "markers",
 	requestBody: {
 		parameters: {
 			max_new_tokens: 60,
@@ -82,6 +85,7 @@ const HfDeepSeekConfig: Config = {
 	// as it indicates the position to fill in
 	"fillInTheMiddle.suffix": "<｜fim▁hole｜>",
 	"fillInTheMiddle.middle": "<｜fim▁end｜>",
+	"fillInTheMiddle.style": "markers",
 	// DeepSeek should support 16k, 
 	// keeping at 8k because of resource constraints
 	contextWindow: 1024,
@@ -129,6 +133,25 @@ const OllamaCodeLlama7BConfig: Config = {
 	}
 }
 
+const VertexMistralCodestralConfig: Config = {
+	modelId: "vertex-mistral-codestral",
+	backend: "openai",
+	url: null,
+	"fillInTheMiddle.enabled": true,
+	"fillInTheMiddle.prefix": "‹PRE›",
+	"fillInTheMiddle.middle": "‹MID›", 
+	"fillInTheMiddle.suffix": "‹SUF›",
+	"fillInTheMiddle.style": "prompt_suffix",
+	requestBody: {
+		max_tokens: 128,
+		temperature: 0.2,
+		top_p: 0.9
+	},
+	contextWindow: 4096,
+	tokensToClear: [],
+	tokenizer: null
+}
+
 
 export const templates: Partial<Record<TemplateKey, Config>> = {
 	"hf/bigcode/starcoder2-15b": HfStarCoder215BConfig,
@@ -137,4 +160,5 @@ export const templates: Partial<Record<TemplateKey, Config>> = {
 	"hf/WizardLM/WizardCoder-Python-34B-V1.0": HfWizardCoderPython34Bv1Config,
     "hf/deepseek-ai/deepseek-coder-6.7b-base": HfDeepSeekConfig,
 	"ollama/codellama:7b": OllamaCodeLlama7BConfig,
+	"vertex/mistral-codestral": VertexMistralCodestralConfig,
 }

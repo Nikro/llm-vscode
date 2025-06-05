@@ -160,6 +160,10 @@ export async function activate(context: vscode.ExtensionContext) {
 			if (tokenizerConfig != null && tokenizerConfig.repository != null && tokenizerConfig.api_token == null) {
 				tokenizerConfig.api_token = await ctx.secrets.get('apiToken');
 			}
+			// Handle requestBody properly - allow users to completely override or null out parameters
+			const requestBodyConfig = config.get("requestBody") as object | null;
+			const requestBody = requestBodyConfig === null ? {} : requestBodyConfig;
+
 			let params = {
 				position,
 				textDocument: client.code2ProtocolConverter.asTextDocumentIdentifier(document),
@@ -168,8 +172,14 @@ export async function activate(context: vscode.ExtensionContext) {
 				url: config.get("url") as string | null,
 				tokensToClear: config.get("tokensToClear") as string[],
 				apiToken: await ctx.secrets.get('apiToken'),
-				requestBody: config.get("requestBody") as object,
-				fim: config.get("fillInTheMiddle") as number,
+				requestBody,
+				fim: {
+					enabled: config.get("fillInTheMiddle.enabled") as boolean,
+					prefix: config.get("fillInTheMiddle.prefix") as string,
+					middle: config.get("fillInTheMiddle.middle") as string,
+					suffix: config.get("fillInTheMiddle.suffix") as string,
+					style: config.get("fillInTheMiddle.style") as string || "markers"
+				},
 				contextWindow: config.get("contextWindow") as number,
 				tlsSkipVerifyInsecure: config.get("tlsSkipVerifyInsecure") as boolean,
 				ide: "vscode",
