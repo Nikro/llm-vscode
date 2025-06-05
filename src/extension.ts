@@ -162,7 +162,14 @@ export async function activate(context: vscode.ExtensionContext) {
 			}
 			// Handle requestBody properly - allow users to completely override or null out parameters
 			const requestBodyConfig = config.get("requestBody") as object | null;
-			const requestBody = requestBodyConfig === null ? {} : requestBodyConfig;
+			let requestBody = requestBodyConfig === null ? {} : requestBodyConfig;
+			
+			// Filter out null values from requestBody to avoid sending them to the API
+			if (requestBody && typeof requestBody === 'object') {
+				requestBody = Object.fromEntries(
+					Object.entries(requestBody).filter(([_, value]) => value !== null)
+				);
+			}
 
 			let params = {
 				position,
